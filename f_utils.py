@@ -8,18 +8,27 @@ consistent.
 
 '''
 
-def price_action(ticker, start_date = "2021-01-01", end_date = str(datetime.date.today())):
+import pandas_datareader.data as web
+from datetime import datetime
+
+def price_action(ticker, token_path = "token.txt", start_date = "2021-01-01", 
+end_date = str(datetime.today())):
     ''' Retrieve the price action data for a stock given a time period.
 
+    Note that the APIs are constantly changing,
+    so it may break from time to time.
+
+    https://pandas-datareader.readthedocs.io/en/latest/remote_data.html
+
     Default: From Jan 1 2021 to Today
+
     '''
-    from pandas_datareader import data as pdr
-    from datetime import datetime
-    
-    pdr.get_data_yahoo(ticker, start = 
-    start_date, end= end_date)
+    with open(token_path) as f:
+        token = f.readline()
+    df = web.get_data_tiingo(ticker, start = 
+    start_date, end = end_date, api_key = token)
 
-
+    return df
 
 def rsi(df, periods = 14, ema = True):
     """

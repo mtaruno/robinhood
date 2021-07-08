@@ -1,5 +1,6 @@
 # This is where I make some useful functions
-
+#%%
+import os
 import plotly.express as px
 import seaborn as sns
 import plotly.graph_objs as go
@@ -7,16 +8,15 @@ import yfinance as yf
 import pandas as pd
 import numpy as np
 import re
-from pandas_datareader import data as pdr
 import datetime
+import f_utils
 
-
-
+#%%
 def ingest(data, num_cols = 7):
     ''' Takes as input a direct copy paste form the "Account" section of
     Robinhood's web portal. Special function for Robinhood.
     '''
-    get_data = lambda ticker, start_date = "2021-01-01": pdr.get_data_yahoo(ticker, start = start_date, end=str(datetime.date.today()))
+    # get_data = lambda ticker, start_date = "2021-01-01": pdr.get_data_yahoo(ticker, start = start_date, end=str(datetime.date.today()))
     
     # Storing data in a list - list comprehension is to remove empty strings
     data = [i for i in data.split('\n') if i] 
@@ -55,8 +55,11 @@ def ingest(data, num_cols = 7):
         df[col] = df[col].apply(to_float)
         
     # Calculating the most recent price
-    price = [get_data(ticker, start_date = str(datetime.date.today())).Close.iloc[-1] for ticker in df['Symbol']]
-    df['Price'] = price
+    prices = f_utils.price_action(df.Symbol, 
+    token_path = "./token.txt", 
+    start_date = datetime.datetime.today() - datetime.timedelta(1))
+
+    df['Price'] = list(prices)
     
     # Calculating the correct total return
     df['Total Return'] = df['Shares']*df['Price'] - df['Shares'] * \
@@ -71,3 +74,26 @@ def ingest(data, num_cols = 7):
     df['Decay/Increase'] = (df['Price'] - df['Average Cost'])/ df['Average Cost']
     
     return df
+
+#%%
+
+# import f_utils
+# prices = f_utils.price_action(["JMIA","TSLA"], 
+#     token_path = "../token.txt", 
+#     start_date = datetime.datetime.today() - datetime.timedelta(1))
+# list(prices.close)
+
+#%%
+
+# test
+with open('data/stocks.txt') as f:
+    raw = f.read()
+    
+df = ingest(raw)
+
+# %%
+df
+# %%
+import os
+os.listdir()
+# %%

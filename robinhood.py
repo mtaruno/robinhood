@@ -1,24 +1,33 @@
 #%%
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import re
-import plotly.express as px
 import seaborn as sns
-import plotly.graph_objs as go
 # Data Source
-import yfinance as yf
 import ingest
 from datetime import datetime
 
-
 # Colors
 c = dict(gold = "#FFD700", silver = "#CD7F32", bronze = "#9EA0A1")
+
+#%%
+import os
+os.listdir()
 # %%
-with open('stocks.txt') as f:
+with open('../data/stocks.txt') as f:
     raw = f.read()
     
 df = ingest.ingest(raw)
+#%%
+# Dashboard
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
+from dash.dependencies import Input, Output, State
+# Add an import for pandas_datareader and datetime
+import pandas_datareader.data as web
+
+
 # %%
 cat = {}
 cat['energy'] = ['']
