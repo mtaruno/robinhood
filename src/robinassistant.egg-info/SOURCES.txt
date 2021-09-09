@@ -1,0 +1,8 @@
+README.md
+pyproject.toml
+setup.cfg
+setup.py
+src/robinassistant.egg-info/PKG-INFO
+src/robinassistant.egg-info/SOURCES.txt
+src/robinassistant.egg-info/dependency_links.txt
+src/robinassistant.egg-info/top_level.txt

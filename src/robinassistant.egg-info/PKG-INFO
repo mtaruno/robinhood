@@ -1,0 +1,20 @@
+Metadata-Version: 2.1
+Name: robinassistant
+Version: 0.0.1
+Summary: Personal stock trading assistant
+Home-page: https://github.com/pypa/sampleproject
+Author: Matthew Taruno
+Author-email: matthew.taruno@gmail.com
+License: MIT
+Project-URL: Bug Tracker, https://github.com/pypa/sampleproject/issues
+Description: # robinhood
+        
+        This is my personal portfolio tracking repository.
+        
+        I wanted the simplest and quickest indicator so I don't have to worry about API scraping, so I am sourcing my position data directly from the Robinhood web accounts page.
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown

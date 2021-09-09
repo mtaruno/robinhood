@@ -11,8 +11,10 @@ consistent.
 import pandas_datareader.data as web
 import datetime
 import pandas as pd
+import warnings
 
-def price_action(ticker, token_path = "token.txt", 
+
+def price_action(ticker: str, token_path = "resources/token.txt", 
     start_date: datetime.date = datetime.date(2021,1,1)
     , end_date: datetime.date = datetime.datetime.today()) -> pd.DataFrame:
     ''' Retrieve the price action data for a stock given a time period.
@@ -25,6 +27,56 @@ def price_action(ticker, token_path = "token.txt",
     Default: From Jan 1 2021 to Today
 
     '''
+    with open(token_path) as f:
+        token = f.readline()
+
+    print(start_date.weekday())
+
+    if start_date.weekday() in [5,6]:
+        warnings.warn("The Start Date is not a weekday! Market probably has no data there.")
+
+    price_data = pd.DataFrame()
+
+    try:
+        price_data = web.get_data_tiingo(
+            ticker, start=start_date, end=end_date, api_key=token)
+    except KeyError:
+        print("Not available for the dates specified")
+
+    return price_data
+
+def multi_price_action(tickers: list, token_path = 'resources/token.txt', start_date: datetime.date = datetime.date(2021,1,1)
+    , end_date: datetime.date = datetime.datetime.today()) -> dict:
+    ''' We want to ingest price action data for multiple tickers at once
+    
+    Returns a dictionary with successful fetches of tickers in the keys and
+    the stock action data in the values. 
+    '''
+    with open(token_path) as f:
+        token = f.readline()
+
+    failed = []
+    passed = {}
+
+    # testing if fetching data will invoke an error
+    for tick in tickers:
+        try:
+            passed[tick] = web.get_data_tiingo(
+                tick, start=start_date, end=end_date, api_key=token)
+        except (IOError, KeyError):
+            print(f'Failed to read symbol: {tick}, will replace with NaN.')
+            failed.append(tick)
+
+    # reporting
+    if failed: # means failed list contains any element at all
+        print("Data not available for following tick/tickers: {}".format(str(failed)))
+
+    return passed
+
+def price_action_with_retries(ticker, token_path = "token.txt", 
+    start_date: datetime.date = datetime.date(2021,1,1)
+    , end_date: datetime.date = datetime.datetime.today()) -> pd.DataFrame:
+ 
     with open(token_path) as f:
         token = f.readline()
 
@@ -41,7 +93,9 @@ def price_action(ticker, token_path = "token.txt",
 
     return price_data
 
-def rsi(df, periods = 14, ema = True):
+
+
+def rsi(df: pd.DataFrame, periods = 14, ema = True) -> pd.DataFrame:
     """
     Returns a pd.Series with the relative strength index give a price action
     dataframe.
@@ -64,3 +118,4 @@ def rsi(df, periods = 14, ema = True):
     rsi = ma_up / ma_down
     rsi = 100 - (100/(1 + rsi))
     return rsi
+
